@@ -45,8 +45,8 @@ const SearchFilter = ({
         <select value={colorFilter} onChange={(e) => handleColorFilterChange(e.target.value)} style={{ width: '48%' }}>
           <option value=''>Select Color Filter</option>
           <option value='pink'>Price (pink)</option>
-          <option value='blue'>Information (blue)</option>
-          <option value='red'>Review (red)</option>
+          <option value='#33CCFF'>Information (blue sky)</option>
+          <option value='#009999'>Review (green)</option>
           <option value='yellow'>Product (yellow)</option>
           <option value='gray'>Local (gray)</option>
           <option value='orange'>Services (orange)</option>

@@ -41,9 +41,9 @@ const App = () => {
   const getColorForIntent = (intent) => {
     switch (intent) {
       case 'i':
-        return 'blue' // information
+        return '#33CCFF' // information
       case 're':
-        return 'red' // review
+        return '#009999' // review
       case 'pr':
         return 'pink' // price
       case 'sp':
