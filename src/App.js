@@ -30,6 +30,21 @@ const App = () => {
     setColorFilter(color)
   }
 
+  const handleFilterDuplicates = () => {
+    const uniqueKeywords = Array.from(
+      new Set(
+        includeKeywords
+          .split('\n')
+          .map((k) => k.trim())
+          .filter((k) => k)
+      )
+    )
+    setIncludeKeywords(uniqueKeywords.join('\n'))
+
+    const uniqueData = Array.from(new Set(data.map(JSON.stringify))).map(JSON.parse)
+    setData(uniqueData)
+  }
+
   const includeKeywordArray = includeKeywords
     .split('\n')
     .map((k) => k.trim())
@@ -121,7 +136,12 @@ const App = () => {
   return (
     <div style={{ marginTop: '20px', marginLeft: '20px' }}>
       <h1>Excel Filter App</h1>
-      <FileUpload setData={setData} />
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <FileUpload setData={setData} />
+        <button onClick={handleFilterDuplicates} style={{ marginLeft: '20px' }}>
+          Filter Duplicates
+        </button>
+      </div>
       {data.length > 0 && (
         <>
           <div style={{ display: 'flex' }}>
