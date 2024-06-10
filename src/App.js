@@ -3,6 +3,7 @@ import FileUpload from './FileUpload'
 import SearchFilter from './SearchFilter'
 import DataTable from './DataTable'
 import * as XLSX from 'xlsx'
+import './App.css'
 
 const App = () => {
   const [data, setData] = useState([])
