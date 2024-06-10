@@ -3,7 +3,6 @@ import FileUpload from './FileUpload'
 import SearchFilter from './SearchFilter'
 import DataTable from './DataTable'
 import * as XLSX from 'xlsx'
-import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 const App = () => {
   const [data, setData] = useState([])
@@ -11,7 +10,6 @@ const App = () => {
   const [excludeKeywords, setExcludeKeywords] = useState('')
   const [minWords, setMinWords] = useState('')
   const [maxWords, setMaxWords] = useState('')
-  const [copied, setCopied] = useState(false)
 
   const handleIncludeKeywordsChange = (keywordsStr) => {
     setIncludeKeywords(keywordsStr)
@@ -74,12 +72,6 @@ const App = () => {
     }-${date.getDate()}_${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`
     const fileName = `filtered_data_${formattedDate}.xlsx`
     XLSX.writeFile(workbook, fileName)
-  }
-
-  const copyData = () => {
-    const headers = Object.keys(filteredData[0] || {}).join('\t')
-    const rows = filteredData.map((row) => Object.values(row).join('\t')).join('\n')
-    return `${headers}\n${rows}`
   }
 
   return (
