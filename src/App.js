@@ -110,12 +110,6 @@ const App = () => {
     XLSX.writeFile(workbook, fileName)
   }
 
-  const copyData = () => {
-    const headers = Object.keys(filteredData[0] || {}).join('\t')
-    const rows = filteredData.map((row) => Object.values(row).join('\t')).join('\n')
-    return `${headers}\n${rows}`
-  }
-
   return (
     <div style={{ marginTop: '20px', marginLeft: '20px' }}>
       <h1>Excel Filter App</h1>
