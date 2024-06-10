@@ -1,6 +1,6 @@
 import React from 'react'
 
-const DataTable = ({ data }) => {
+const DataTable = ({ data, getColorForIntent }) => {
   if (!data.length) return <p>No data available</p>
 
   const headers = Object.keys(data[0])
@@ -16,7 +16,7 @@ const DataTable = ({ data }) => {
       </thead>
       <tbody>
         {data.map((row, index) => (
-          <tr key={index}>
+          <tr key={index} style={{ backgroundColor: getColorForIntent(row.Intent) }}>
             {headers.map((header) => (
               <td key={header}>{row[header]}</td>
             ))}

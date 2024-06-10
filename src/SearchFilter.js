@@ -9,6 +9,10 @@ const SearchFilter = ({
   setMinWords,
   maxWords,
   setMaxWords,
+  intentFilter,
+  handleIntentFilterChange,
+  colorFilter,
+  handleColorFilterChange,
 }) => {
   return (
     <div style={{ marginTop: '20px', marginLeft: '20px' }}>
@@ -29,6 +33,25 @@ const SearchFilter = ({
       <div style={{ display: 'flex', marginTop: '10px' }}>
         <input type='number' value={minWords} onChange={(e) => setMinWords(e.target.value)} placeholder='Min Words' style={{ marginRight: '10px' }} />
         <input type='number' value={maxWords} onChange={(e) => setMaxWords(e.target.value)} placeholder='Max Words' />
+      </div>
+      <div style={{ display: 'flex', marginTop: '10px' }}>
+        <input
+          type='text'
+          value={intentFilter}
+          onChange={(e) => handleIntentFilterChange(e.target.value)}
+          placeholder='Intent Filter'
+          style={{ width: '48%', marginRight: '2%' }}
+        />
+        <select value={colorFilter} onChange={(e) => handleColorFilterChange(e.target.value)} style={{ width: '48%' }}>
+          <option value=''>Select Color Filter</option>
+          <option value='pink'>Price (pink)</option>
+          <option value='blue'>Information (blue)</option>
+          <option value='red'>Review (red)</option>
+          <option value='yellow'>Product (yellow)</option>
+          <option value='gray'>Local (gray)</option>
+          <option value='orange'>Services (orange)</option>
+          <option value='white'>Topic (white)</option>
+        </select>
       </div>
     </div>
   )

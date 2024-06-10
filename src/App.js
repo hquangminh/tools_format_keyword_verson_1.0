@@ -3,6 +3,7 @@ import FileUpload from './FileUpload'
 import SearchFilter from './SearchFilter'
 import DataTable from './DataTable'
 import * as XLSX from 'xlsx'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 const App = () => {
   const [data, setData] = useState([])
@@ -10,6 +11,9 @@ const App = () => {
   const [excludeKeywords, setExcludeKeywords] = useState('')
   const [minWords, setMinWords] = useState('')
   const [maxWords, setMaxWords] = useState('')
+  const [intentFilter, setIntentFilter] = useState('')
+  const [colorFilter, setColorFilter] = useState('')
+  const [copied, setCopied] = useState(false)
 
   const handleIncludeKeywordsChange = (keywordsStr) => {
     setIncludeKeywords(keywordsStr)
@@ -17,6 +21,14 @@ const App = () => {
 
   const handleExcludeKeywordsChange = (keywordsStr) => {
     setExcludeKeywords(keywordsStr)
+  }
+
+  const handleIntentFilterChange = (intent) => {
+    setIntentFilter(intent)
+  }
+
+  const handleColorFilterChange = (color) => {
+    setColorFilter(color)
   }
 
   const includeKeywordArray = includeKeywords
@@ -28,6 +40,25 @@ const App = () => {
     .map((k) => k.trim())
     .filter((k) => k)
 
+  const getColorForIntent = (intent) => {
+    switch (intent) {
+      case 'i':
+        return 'blue' // information
+      case 're':
+        return 'red' // review
+      case 'pr':
+        return 'pink' // price
+      case 'sp':
+        return 'yellow' // product
+      case 'l':
+        return 'gray' // local
+      case 'dv':
+        return 'orange' // services
+      default:
+        return 'white' // topic
+    }
+  }
+
   const filteredData = data.filter((row) => {
     const matchesIncludeKeywords =
       includeKeywordArray.length === 0 ||
@@ -37,7 +68,10 @@ const App = () => {
       Object.values(row).some((val) => String(val).toLowerCase().includes(keyword.toLowerCase()))
     )
 
-    if (!matchesIncludeKeywords || matchesExcludeKeywords) {
+    const matchesIntentFilter = intentFilter === '' || (row.Intent && row.Intent.toLowerCase().includes(intentFilter.toLowerCase()))
+    const matchesColorFilter = colorFilter === '' || getColorForIntent(row.Intent) === colorFilter
+
+    if (!matchesIncludeKeywords || matchesExcludeKeywords || !matchesIntentFilter || !matchesColorFilter) {
       return false
     }
 
@@ -63,15 +97,25 @@ const App = () => {
       : { 'Filtered Data': filteredData }
 
   const downloadExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(filteredData)
+    const worksheet = XLSX.utils.json_to_sheet(data)
     const workbook = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'FilteredData')
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'AllData')
+    Object.keys(groupedData).forEach((group) => {
+      const groupSheet = XLSX.utils.json_to_sheet(groupedData[group])
+      XLSX.utils.book_append_sheet(workbook, groupSheet, group)
+    })
     const date = new Date()
     const formattedDate = `${date.getFullYear()}-${
       date.getMonth() + 1
     }-${date.getDate()}_${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`
     const fileName = `filtered_data_${formattedDate}.xlsx`
     XLSX.writeFile(workbook, fileName)
+  }
+
+  const copyData = () => {
+    const headers = Object.keys(filteredData[0] || {}).join('\t')
+    const rows = filteredData.map((row) => Object.values(row).join('\t')).join('\n')
+    return `${headers}\n${rows}`
   }
 
   return (
@@ -83,7 +127,7 @@ const App = () => {
           <div style={{ display: 'flex' }}>
             <div style={{ flex: '1', marginRight: '20px' }}>
               <h2>All Data</h2>
-              <DataTable data={data} />
+              <DataTable data={data} getColorForIntent={getColorForIntent} />
             </div>
             <div style={{ flex: '3' }}>
               <SearchFilter
@@ -95,20 +139,28 @@ const App = () => {
                 setMinWords={setMinWords}
                 maxWords={maxWords}
                 setMaxWords={setMaxWords}
+                intentFilter={intentFilter}
+                handleIntentFilterChange={handleIntentFilterChange}
+                colorFilter={colorFilter}
+                handleColorFilterChange={handleColorFilterChange}
               />
               <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '20px' }}>
                 {Object.keys(groupedData).map((group, index) => (
                   <div key={group} style={{ flex: '1 1 20%', margin: '10px' }}>
                     <h2>{group}</h2>
-                    <DataTable data={groupedData[group]} />
+                    <DataTable data={groupedData[group]} getColorForIntent={getColorForIntent} />
                   </div>
                 ))}
               </div>
             </div>
           </div>
           <button onClick={downloadExcel} style={{ marginTop: '20px' }}>
-            Download Filtered Data
+            Download All Data
           </button>
+          <CopyToClipboard text={copyData()} onCopy={() => setCopied(true)}>
+            <button style={{ marginTop: '20px' }}>Copy to Clipboard</button>
+          </CopyToClipboard>
+          {copied && <p>Data copied to clipboard!</p>}
         </>
       )}
     </div>
