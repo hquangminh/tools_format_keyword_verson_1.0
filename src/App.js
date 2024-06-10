@@ -3,7 +3,6 @@ import FileUpload from './FileUpload'
 import SearchFilter from './SearchFilter'
 import DataTable from './DataTable'
 import * as XLSX from 'xlsx'
-import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 const App = () => {
   const [data, setData] = useState([])
@@ -13,7 +12,6 @@ const App = () => {
   const [maxWords, setMaxWords] = useState('')
   const [intentFilter, setIntentFilter] = useState('')
   const [colorFilter, setColorFilter] = useState('')
-  const [copied, setCopied] = useState(false)
 
   const handleIncludeKeywordsChange = (keywordsStr) => {
     setIncludeKeywords(keywordsStr)
@@ -157,10 +155,6 @@ const App = () => {
           <button onClick={downloadExcel} style={{ marginTop: '20px' }}>
             Download All Data
           </button>
-          <CopyToClipboard text={copyData()} onCopy={() => setCopied(true)}>
-            <button style={{ marginTop: '20px' }}>Copy to Clipboard</button>
-          </CopyToClipboard>
-          {copied && <p>Data copied to clipboard!</p>}
         </>
       )}
     </div>
