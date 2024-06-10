@@ -73,14 +73,21 @@ const App = () => {
       return false
     }
 
-    const totalWordCount = Object.values(row).reduce((count, val) => {
-      return count + String(val).trim().split(/\s+/).length
-    }, 0)
+    const countWords = (str) => {
+      const trimmedStr = str.trim()
+      if (trimmedStr === '') {
+        return 0
+      }
+      return trimmedStr.split(/\s+/).length
+    }
 
-    const matchesWordCount =
-      (minWords === '' || totalWordCount >= parseInt(minWords, 10)) && (maxWords === '' || totalWordCount <= parseInt(maxWords, 10))
+    // Tính tổng số từ trong một chuỗi duy nhất và so sánh
+    const meetsWordCountCriteria = Object.values(row).some((val) => {
+      const wordCount = countWords(String(val))
+      return (minWords === '' || wordCount >= parseInt(minWords, 10)) && (maxWords === '' || wordCount <= parseInt(maxWords, 10))
+    })
 
-    return matchesWordCount
+    return meetsWordCountCriteria
   })
 
   const groupedData =
@@ -137,7 +144,7 @@ const App = () => {
                 handleColorFilterChange={handleColorFilterChange}
               />
               <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '20px' }}>
-                {Object.keys(groupedData).map((group, index) => (
+                {Object.keys(groupedData).map((group) => (
                   <div key={group} style={{ flex: '1 1 20%', margin: '10px' }}>
                     <h2>{group}</h2>
                     <DataTable data={groupedData[group]} getColorForIntent={getColorForIntent} />
