@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import * as XLSX from 'xlsx'
+import './App.css'
 
 const FileUpload = ({ setData }) => {
   const [error, setError] = useState('')
@@ -36,7 +37,7 @@ const FileUpload = ({ setData }) => {
     <div>
       <input type='file' onChange={handleFile} accept='.xlsx' />
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      {fileName && <p>Uploaded file: {fileName}</p>}
+      {fileName && <p className='upload_file_button'>Uploaded file: {fileName}</p>}
     </div>
   )
 }

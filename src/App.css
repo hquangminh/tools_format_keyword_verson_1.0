@@ -12,3 +12,12 @@ button:hover {
   opacity: 0.8;
   zoom: inherit;
 }
+.filter_button {
+  color: white;
+  background-color: blueviolet;
+  font-weight: 600;
+  padding: 10px;
+}
+.upload_file_button {
+  font-size: 16px;
+}

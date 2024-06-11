@@ -15,6 +15,10 @@ const App = () => {
   const [colorFilter, setColorFilter] = useState('')
   const [startKeywords, setStartKeywords] = useState('')
   const [endKeywords, setEndKeywords] = useState('')
+  const [minVol, setMinVol] = useState('')
+  const [maxVol, setMaxVol] = useState('')
+  const [minKD, setMinKD] = useState('')
+  const [maxKD, setMaxKD] = useState('')
 
   const handleIncludeKeywordsChange = (keywordsStr) => {
     setIncludeKeywords(keywordsStr)
@@ -38,6 +42,22 @@ const App = () => {
 
   const handleEndKeywordsChange = (keywordsStr) => {
     setEndKeywords(keywordsStr)
+  }
+
+  const handleMinVolChange = (vol) => {
+    setMinVol(vol)
+  }
+
+  const handleMaxVolChange = (vol) => {
+    setMaxVol(vol)
+  }
+
+  const handleMinKDChange = (kd) => {
+    setMinKD(kd)
+  }
+
+  const handleMaxKDChange = (kd) => {
+    setMaxKD(kd)
   }
 
   const handleFilterDuplicates = () => {
@@ -113,13 +133,19 @@ const App = () => {
       endKeywordArray.length === 0 ||
       endKeywordArray.some((keyword) => Object.values(row).some((val) => String(val).toLowerCase().includes(keyword.toLowerCase())))
 
+    const matchesVolRange = (minVol === '' || row['Vol'] >= parseFloat(minVol)) && (maxVol === '' || row['Vol'] <= parseFloat(maxVol))
+
+    const matchesKDRange = (minKD === '' || row['KD'] >= parseFloat(minKD)) && (maxKD === '' || row['KD'] <= parseFloat(maxKD))
+
     if (
       !matchesIncludeKeywords ||
       matchesExcludeKeywords ||
       !matchesIntentFilter ||
       !matchesColorFilter ||
       !matchesStartKeywords ||
-      !matchesEndKeywords
+      !matchesEndKeywords ||
+      !matchesVolRange ||
+      !matchesKDRange
     ) {
       return false
     }
@@ -172,7 +198,7 @@ const App = () => {
       <h1>Excel Filter App</h1>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <FileUpload setData={setData} />
-        <button onClick={handleFilterDuplicates} style={{ marginLeft: '20px' }}>
+        <button class='filter_button' onClick={handleFilterDuplicates} style={{ marginLeft: '20px' }}>
           Filter Duplicates
         </button>
       </div>
@@ -201,6 +227,14 @@ const App = () => {
                 handleStartKeywordsChange={handleStartKeywordsChange}
                 endKeywords={endKeywords}
                 handleEndKeywordsChange={handleEndKeywordsChange}
+                minVol={minVol}
+                handleMinVolChange={handleMinVolChange}
+                maxVol={maxVol}
+                handleMaxVolChange={handleMaxVolChange}
+                minKD={minKD}
+                handleMinKDChange={handleMinKDChange}
+                maxKD={maxKD}
+                handleMaxKDChange={handleMaxKDChange}
               />
               <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '20px' }}>
                 {Object.keys(groupedData).map((group) => (
