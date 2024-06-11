@@ -13,6 +13,10 @@ const SearchFilter = ({
   handleIntentFilterChange,
   colorFilter,
   handleColorFilterChange,
+  startKeyword,
+  handleStartKeywordChange,
+  endKeyword,
+  handleEndKeywordChange,
 }) => {
   return (
     <div style={{ marginTop: '20px', marginLeft: '20px' }}>
@@ -53,6 +57,22 @@ const SearchFilter = ({
           <option value='#FF9966'>Method ( red orange)</option>
           <option value='white'>Topic (white)</option>
         </select>
+      </div>
+      <div style={{ display: 'flex', marginTop: '10px' }}>
+        <input
+          type='text'
+          value={startKeyword}
+          onChange={(e) => handleStartKeywordChange(e.target.value)}
+          placeholder='Start Keyword'
+          style={{ width: '48%', marginRight: '2%' }}
+        />
+        <input
+          type='text'
+          value={endKeyword}
+          onChange={(e) => handleEndKeywordChange(e.target.value)}
+          placeholder='End Keyword'
+          style={{ width: '48%' }}
+        />
       </div>
     </div>
   )

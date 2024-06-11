@@ -13,6 +13,8 @@ const App = () => {
   const [maxWords, setMaxWords] = useState('')
   const [intentFilter, setIntentFilter] = useState('')
   const [colorFilter, setColorFilter] = useState('')
+  const [startKeyword, setStartKeyword] = useState('')
+  const [endKeyword, setEndKeyword] = useState('')
 
   const handleIncludeKeywordsChange = (keywordsStr) => {
     setIncludeKeywords(keywordsStr)
@@ -28,6 +30,14 @@ const App = () => {
 
   const handleColorFilterChange = (color) => {
     setColorFilter(color)
+  }
+
+  const handleStartKeywordChange = (keyword) => {
+    setStartKeyword(keyword)
+  }
+
+  const handleEndKeywordChange = (keyword) => {
+    setEndKeyword(keyword)
   }
 
   const handleFilterDuplicates = () => {
@@ -87,7 +97,16 @@ const App = () => {
     const matchesIntentFilter = intentFilter === '' || (row.Intent && row.Intent.toLowerCase().includes(intentFilter.toLowerCase()))
     const matchesColorFilter = colorFilter === '' || getColorForIntent(row.Intent) === colorFilter
 
-    if (!matchesIncludeKeywords || matchesExcludeKeywords || !matchesIntentFilter || !matchesColorFilter) {
+    const matchesStartEndKeywords =
+      (startKeyword === '' && endKeyword === '') ||
+      Object.values(row).some((val) => {
+        const strVal = String(val).toLowerCase().trim()
+        return (
+          (startKeyword === '' || strVal.startsWith(startKeyword.toLowerCase())) && (endKeyword === '' || strVal.endsWith(endKeyword.toLowerCase()))
+        )
+      })
+
+    if (!matchesIncludeKeywords || matchesExcludeKeywords || !matchesIntentFilter || !matchesColorFilter || !matchesStartEndKeywords) {
       return false
     }
 
@@ -165,6 +184,10 @@ const App = () => {
                 handleIntentFilterChange={handleIntentFilterChange}
                 colorFilter={colorFilter}
                 handleColorFilterChange={handleColorFilterChange}
+                startKeyword={startKeyword}
+                handleStartKeywordChange={handleStartKeywordChange}
+                endKeyword={endKeyword}
+                handleEndKeywordChange={handleEndKeywordChange}
               />
               <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '20px' }}>
                 {Object.keys(groupedData).map((group) => (
