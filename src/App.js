@@ -19,6 +19,8 @@ const App = () => {
   const [maxVol, setMaxVol] = useState('')
   const [minKD, setMinKD] = useState('')
   const [maxKD, setMaxKD] = useState('')
+  const [positionKeywords, setPositionKeywords] = useState('')
+  const [keywordPosition, setKeywordPosition] = useState('')
 
   const handleIncludeKeywordsChange = (keywordsStr) => {
     setIncludeKeywords(keywordsStr)
@@ -60,6 +62,14 @@ const App = () => {
     setMaxKD(kd)
   }
 
+  const handlePositionKeywordsChange = (keywordsStr) => {
+    setPositionKeywords(keywordsStr)
+  }
+
+  const handleKeywordPositionChange = (position) => {
+    setKeywordPosition(position)
+  }
+
   const handleFilterDuplicates = () => {
     const uniqueKeywords = Array.from(
       new Set(
@@ -88,6 +98,10 @@ const App = () => {
     .map((k) => k.trim())
     .filter((k) => k)
   const endKeywordArray = endKeywords
+    .split('\n')
+    .map((k) => k.trim())
+    .filter((k) => k)
+  const positionKeywordArray = positionKeywords
     .split('\n')
     .map((k) => k.trim())
     .filter((k) => k)
@@ -137,6 +151,20 @@ const App = () => {
 
     const matchesKDRange = (minKD === '' || row['KD'] >= parseFloat(minKD)) && (maxKD === '' || row['KD'] <= parseFloat(maxKD))
 
+    const matchesPositionKeywords =
+      positionKeywordArray.length === 0 ||
+      positionKeywordArray.some((keyword) => {
+        return Object.values(row).some((val) => {
+          const lowerVal = String(val).toLowerCase()
+          const keywordIndex = lowerVal.indexOf(keyword.toLowerCase())
+          if (keywordIndex !== -1) {
+            const words = lowerVal.substring(0, keywordIndex).trim().split(/\s+/)
+            return words.length + 1 === parseInt(keywordPosition, 10)
+          }
+          return false
+        })
+      })
+
     if (
       !matchesIncludeKeywords ||
       matchesExcludeKeywords ||
@@ -145,7 +173,8 @@ const App = () => {
       !matchesStartKeywords ||
       !matchesEndKeywords ||
       !matchesVolRange ||
-      !matchesKDRange
+      !matchesKDRange ||
+      !matchesPositionKeywords
     ) {
       return false
     }
@@ -198,7 +227,7 @@ const App = () => {
       <h1>Excel Filter App</h1>
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <FileUpload setData={setData} />
-        <button class='filter_button' onClick={handleFilterDuplicates} style={{ marginLeft: '20px' }}>
+        <button className='filter_button' onClick={handleFilterDuplicates} style={{ marginLeft: '20px' }}>
           Filter Duplicates
         </button>
       </div>
@@ -235,6 +264,10 @@ const App = () => {
                 handleMinKDChange={handleMinKDChange}
                 maxKD={maxKD}
                 handleMaxKDChange={handleMaxKDChange}
+                positionKeywords={positionKeywords}
+                handlePositionKeywordsChange={handlePositionKeywordsChange}
+                keywordPosition={keywordPosition}
+                handleKeywordPositionChange={handleKeywordPositionChange}
               />
               <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '20px' }}>
                 {Object.keys(groupedData).map((group) => (

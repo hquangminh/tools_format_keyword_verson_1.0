@@ -25,6 +25,10 @@ const SearchFilter = ({
   handleMinKDChange,
   maxKD,
   handleMaxKDChange,
+  positionKeywords,
+  handlePositionKeywordsChange,
+  keywordPosition,
+  handleKeywordPositionChange,
 }) => {
   return (
     <div style={{ marginTop: '20px', marginLeft: '20px' }}>
@@ -101,6 +105,22 @@ const SearchFilter = ({
           style={{ width: '48%', marginRight: '2%' }}
         />
         <input type='number' value={maxKD} onChange={(e) => handleMaxKDChange(e.target.value)} placeholder='Max KD' style={{ width: '48%' }} />
+      </div>
+      <div style={{ display: 'flex', marginTop: '10px' }}>
+        <textarea
+          value={positionKeywords}
+          onChange={(e) => handlePositionKeywordsChange(e.target.value)}
+          placeholder='Enter position keywords, one per line...'
+          rows='5'
+          style={{ width: '48%', marginRight: '2%' }}
+        />
+        <input
+          type='number'
+          value={keywordPosition}
+          onChange={(e) => handleKeywordPositionChange(e.target.value)}
+          placeholder='Keyword Position'
+          style={{ width: '48%' }}
+        />
       </div>
     </div>
   )
