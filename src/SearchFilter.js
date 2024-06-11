@@ -54,7 +54,7 @@ const SearchFilter = ({
           <option value='yellow'>Product (yellow)</option>
           <option value='gray'>Local (gray)</option>
           <option value='orange'>Services (orange)</option>
-          <option value='#FF9966'>Method ( red orange)</option>
+          <option value='#FF9966'>Method (red orange)</option>
           <option value='white'>Topic (white)</option>
         </select>
       </div>

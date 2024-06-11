@@ -98,13 +98,8 @@ const App = () => {
     const matchesColorFilter = colorFilter === '' || getColorForIntent(row.Intent) === colorFilter
 
     const matchesStartEndKeywords =
-      (startKeyword === '' && endKeyword === '') ||
-      Object.values(row).some((val) => {
-        const strVal = String(val).toLowerCase().trim()
-        return (
-          (startKeyword === '' || strVal.startsWith(startKeyword.toLowerCase())) && (endKeyword === '' || strVal.endsWith(endKeyword.toLowerCase()))
-        )
-      })
+      (startKeyword === '' || Object.values(row).some((val) => String(val).toLowerCase().includes(startKeyword.toLowerCase()))) &&
+      (endKeyword === '' || Object.values(row).some((val) => String(val).toLowerCase().includes(endKeyword.toLowerCase())))
 
     if (!matchesIncludeKeywords || matchesExcludeKeywords || !matchesIntentFilter || !matchesColorFilter || !matchesStartEndKeywords) {
       return false
