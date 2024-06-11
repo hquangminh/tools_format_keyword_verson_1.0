@@ -68,6 +68,8 @@ const App = () => {
         return 'gray' // local
       case 'dv':
         return 'orange' // services
+      case 'pp':
+        return '#FF9966' //phương pháp - lộ trình
       default:
         return 'white' // topic
     }
