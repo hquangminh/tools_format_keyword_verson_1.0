@@ -13,10 +13,10 @@ const SearchFilter = ({
   handleIntentFilterChange,
   colorFilter,
   handleColorFilterChange,
-  startKeyword,
-  handleStartKeywordChange,
-  endKeyword,
-  handleEndKeywordChange,
+  startKeywords,
+  handleStartKeywordsChange,
+  endKeywords,
+  handleEndKeywordsChange,
 }) => {
   return (
     <div style={{ marginTop: '20px', marginLeft: '20px' }}>
@@ -59,18 +59,18 @@ const SearchFilter = ({
         </select>
       </div>
       <div style={{ display: 'flex', marginTop: '10px' }}>
-        <input
-          type='text'
-          value={startKeyword}
-          onChange={(e) => handleStartKeywordChange(e.target.value)}
-          placeholder='Start Keyword'
+        <textarea
+          value={startKeywords}
+          onChange={(e) => handleStartKeywordsChange(e.target.value)}
+          placeholder='Enter start keywords, one per line...'
+          rows='5'
           style={{ width: '48%', marginRight: '2%' }}
         />
-        <input
-          type='text'
-          value={endKeyword}
-          onChange={(e) => handleEndKeywordChange(e.target.value)}
-          placeholder='End Keyword'
+        <textarea
+          value={endKeywords}
+          onChange={(e) => handleEndKeywordsChange(e.target.value)}
+          placeholder='Enter end keywords, one per line...'
+          rows='5'
           style={{ width: '48%' }}
         />
       </div>

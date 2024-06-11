@@ -13,8 +13,8 @@ const App = () => {
   const [maxWords, setMaxWords] = useState('')
   const [intentFilter, setIntentFilter] = useState('')
   const [colorFilter, setColorFilter] = useState('')
-  const [startKeyword, setStartKeyword] = useState('')
-  const [endKeyword, setEndKeyword] = useState('')
+  const [startKeywords, setStartKeywords] = useState('')
+  const [endKeywords, setEndKeywords] = useState('')
 
   const handleIncludeKeywordsChange = (keywordsStr) => {
     setIncludeKeywords(keywordsStr)
@@ -32,12 +32,12 @@ const App = () => {
     setColorFilter(color)
   }
 
-  const handleStartKeywordChange = (keyword) => {
-    setStartKeyword(keyword)
+  const handleStartKeywordsChange = (keywordsStr) => {
+    setStartKeywords(keywordsStr)
   }
 
-  const handleEndKeywordChange = (keyword) => {
-    setEndKeyword(keyword)
+  const handleEndKeywordsChange = (keywordsStr) => {
+    setEndKeywords(keywordsStr)
   }
 
   const handleFilterDuplicates = () => {
@@ -60,6 +60,14 @@ const App = () => {
     .map((k) => k.trim())
     .filter((k) => k)
   const excludeKeywordArray = excludeKeywords
+    .split('\n')
+    .map((k) => k.trim())
+    .filter((k) => k)
+  const startKeywordArray = startKeywords
+    .split('\n')
+    .map((k) => k.trim())
+    .filter((k) => k)
+  const endKeywordArray = endKeywords
     .split('\n')
     .map((k) => k.trim())
     .filter((k) => k)
@@ -97,11 +105,22 @@ const App = () => {
     const matchesIntentFilter = intentFilter === '' || (row.Intent && row.Intent.toLowerCase().includes(intentFilter.toLowerCase()))
     const matchesColorFilter = colorFilter === '' || getColorForIntent(row.Intent) === colorFilter
 
-    const matchesStartEndKeywords =
-      (startKeyword === '' || Object.values(row).some((val) => String(val).toLowerCase().includes(startKeyword.toLowerCase()))) &&
-      (endKeyword === '' || Object.values(row).some((val) => String(val).toLowerCase().includes(endKeyword.toLowerCase())))
+    const matchesStartKeywords =
+      startKeywordArray.length === 0 ||
+      startKeywordArray.some((keyword) => Object.values(row).some((val) => String(val).toLowerCase().includes(keyword.toLowerCase())))
 
-    if (!matchesIncludeKeywords || matchesExcludeKeywords || !matchesIntentFilter || !matchesColorFilter || !matchesStartEndKeywords) {
+    const matchesEndKeywords =
+      endKeywordArray.length === 0 ||
+      endKeywordArray.some((keyword) => Object.values(row).some((val) => String(val).toLowerCase().includes(keyword.toLowerCase())))
+
+    if (
+      !matchesIncludeKeywords ||
+      matchesExcludeKeywords ||
+      !matchesIntentFilter ||
+      !matchesColorFilter ||
+      !matchesStartKeywords ||
+      !matchesEndKeywords
+    ) {
       return false
     }
 
@@ -113,7 +132,6 @@ const App = () => {
       return trimmedStr.split(/\s+/).length
     }
 
-    // Tính tổng số từ trong một chuỗi duy nhất và so sánh
     const meetsWordCountCriteria = Object.values(row).some((val) => {
       const wordCount = countWords(String(val))
       return (minWords === '' || wordCount >= parseInt(minWords, 10)) && (maxWords === '' || wordCount <= parseInt(maxWords, 10))
@@ -179,10 +197,10 @@ const App = () => {
                 handleIntentFilterChange={handleIntentFilterChange}
                 colorFilter={colorFilter}
                 handleColorFilterChange={handleColorFilterChange}
-                startKeyword={startKeyword}
-                handleStartKeywordChange={handleStartKeywordChange}
-                endKeyword={endKeyword}
-                handleEndKeywordChange={handleEndKeywordChange}
+                startKeywords={startKeywords}
+                handleStartKeywordsChange={handleStartKeywordsChange}
+                endKeywords={endKeywords}
+                handleEndKeywordsChange={handleEndKeywordsChange}
               />
               <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '20px' }}>
                 {Object.keys(groupedData).map((group) => (
