@@ -87,23 +87,48 @@ const App = () => {
     setData(uniqueData)
   }
 
+  const groupByKeywords = (data, depth = 0) => {
+    if (depth >= 3) return data
+
+    const grouped = {}
+    data.forEach((row) => {
+      const keywords = String(row[Object.keys(row)[0]]).split(' ')
+      const key = keywords[depth]
+      if (key) {
+        if (!grouped[key]) {
+          grouped[key] = []
+        }
+        grouped[key].push(row)
+      }
+    })
+
+    Object.keys(grouped).forEach((key) => {
+      grouped[key] = groupByKeywords(grouped[key], depth + 1)
+    })
+
+    return grouped
+  }
+
   const handleGroupKeywords = () => {
     setIsGrouping(true)
     setTimeout(() => {
-      const grouped = {}
-      data.forEach((row) => {
-        const firstColumnValue = row[Object.keys(row)[0]]
-        const firstWord = String(firstColumnValue).split(' ')[0]
-        if (firstWord) {
-          if (!grouped[firstWord]) {
-            grouped[firstWord] = []
-          }
-          grouped[firstWord].push(row)
-        }
-      })
+      const grouped = groupByKeywords(data)
       setGroupedData(grouped)
       setIsGrouping(false)
     }, 1000)
+  }
+
+  const renderGroupedData = (groupedData, depth = 0) => {
+    if (Array.isArray(groupedData)) {
+      return groupedData.length > 0 ? <DataTable data={groupedData} getColorForIntent={getColorForIntent} /> : <p>No data available</p>
+    }
+
+    return Object.keys(groupedData).map((key) => (
+      <div key={key} style={{ marginLeft: depth * 20 }}>
+        <h3>{key}</h3>
+        {renderGroupedData(groupedData[key], depth + 1)}
+      </div>
+    ))
   }
 
   const includeKeywordArray = includeKeywords
@@ -298,18 +323,17 @@ const App = () => {
                 {Object.keys(groupedDataByKeywords).map((group) => (
                   <div key={group} style={{ flex: '1 1 20%', margin: '10px' }}>
                     <h2>{group}</h2>
-                    <DataTable data={groupedDataByKeywords[group]} getColorForIntent={getColorForIntent} />
+                    {groupedDataByKeywords[group].length > 0 ? (
+                      <DataTable data={groupedDataByKeywords[group]} getColorForIntent={getColorForIntent} />
+                    ) : (
+                      <p>No data available</p>
+                    )}
                   </div>
                 ))}
                 {Object.keys(groupedData).length > 0 && (
                   <div style={{ width: '100%', marginTop: '20px' }}>
                     <h2>Grouped Data</h2>
-                    {Object.keys(groupedData).map((group) => (
-                      <div key={group} style={{ flex: '1 1 20%', margin: '10px' }}>
-                        <h2>{group}</h2>
-                        <DataTable data={groupedData[group]} getColorForIntent={getColorForIntent} />
-                      </div>
-                    ))}
+                    {renderGroupedData(groupedData)}
                   </div>
                 )}
               </div>
