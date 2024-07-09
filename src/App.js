@@ -7,6 +7,7 @@ import './App.css'
 
 const App = () => {
   const [data, setData] = useState([])
+  const [groupedData, setGroupedData] = useState({})
   const [includeKeywords, setIncludeKeywords] = useState('')
   const [excludeKeywords, setExcludeKeywords] = useState('')
   const [minWords, setMinWords] = useState('')
@@ -21,6 +22,7 @@ const App = () => {
   const [maxKD, setMaxKD] = useState('')
   const [positionKeywords, setPositionKeywords] = useState('')
   const [keywordPosition, setKeywordPosition] = useState('')
+  const [isGrouping, setIsGrouping] = useState(false)
 
   const handleIncludeKeywordsChange = (keywordsStr) => {
     setIncludeKeywords(keywordsStr)
@@ -83,6 +85,25 @@ const App = () => {
 
     const uniqueData = Array.from(new Set(data.map(JSON.stringify))).map(JSON.parse)
     setData(uniqueData)
+  }
+
+  const handleGroupKeywords = () => {
+    setIsGrouping(true)
+    setTimeout(() => {
+      const grouped = {}
+      data.forEach((row) => {
+        const firstColumnValue = row[Object.keys(row)[0]]
+        const firstWord = String(firstColumnValue).split(' ')[0]
+        if (firstWord) {
+          if (!grouped[firstWord]) {
+            grouped[firstWord] = []
+          }
+          grouped[firstWord].push(row)
+        }
+      })
+      setGroupedData(grouped)
+      setIsGrouping(false)
+    }, 1000)
   }
 
   const includeKeywordArray = includeKeywords
@@ -195,7 +216,7 @@ const App = () => {
     return meetsWordCountCriteria
   })
 
-  const groupedData =
+  const groupedDataByKeywords =
     includeKeywordArray.length > 0
       ? includeKeywordArray.reduce((acc, keyword) => {
           const keyData = filteredData.filter((row) => Object.values(row).some((val) => String(val).toLowerCase().includes(keyword.toLowerCase())))
@@ -210,8 +231,8 @@ const App = () => {
     const worksheet = XLSX.utils.json_to_sheet(data)
     const workbook = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(workbook, worksheet, 'AllData')
-    Object.keys(groupedData).forEach((group) => {
-      const groupSheet = XLSX.utils.json_to_sheet(groupedData[group])
+    Object.keys(groupedDataByKeywords).forEach((group) => {
+      const groupSheet = XLSX.utils.json_to_sheet(groupedDataByKeywords[group])
       XLSX.utils.book_append_sheet(workbook, groupSheet, group)
     })
     const date = new Date()
@@ -229,6 +250,10 @@ const App = () => {
         <FileUpload setData={setData} />
         <button className='filter_button' onClick={handleFilterDuplicates} style={{ marginLeft: '20px' }}>
           Filter Duplicates
+        </button>
+        <button className='group_button' onClick={handleGroupKeywords} style={{ marginLeft: '20px' }}>
+          Group Keywords
+          {isGrouping && <span style={{ marginLeft: '10px' }}>Loading...</span>}
         </button>
       </div>
       {data.length > 0 && (
@@ -270,12 +295,23 @@ const App = () => {
                 handleKeywordPositionChange={handleKeywordPositionChange}
               />
               <div style={{ display: 'flex', flexWrap: 'wrap', marginTop: '20px' }}>
-                {Object.keys(groupedData).map((group) => (
+                {Object.keys(groupedDataByKeywords).map((group) => (
                   <div key={group} style={{ flex: '1 1 20%', margin: '10px' }}>
                     <h2>{group}</h2>
-                    <DataTable data={groupedData[group]} getColorForIntent={getColorForIntent} />
+                    <DataTable data={groupedDataByKeywords[group]} getColorForIntent={getColorForIntent} />
                   </div>
                 ))}
+                {Object.keys(groupedData).length > 0 && (
+                  <div style={{ width: '100%', marginTop: '20px' }}>
+                    <h2>Grouped Data</h2>
+                    {Object.keys(groupedData).map((group) => (
+                      <div key={group} style={{ flex: '1 1 20%', margin: '10px' }}>
+                        <h2>{group}</h2>
+                        <DataTable data={groupedData[group]} getColorForIntent={getColorForIntent} />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
